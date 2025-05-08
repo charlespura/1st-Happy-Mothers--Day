@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Mother's Day</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32"><text y="20" font-size="20">🌸</text></svg>') 0 0, auto;
+      background: linear-gradient(135deg, #ffe4e6, #fbcfe8, #fce7f3);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      backdrop-filter: blur(8px);
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .message-enter {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .message-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .flower {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: fall 5s linear forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10%) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Typing effect */
+    .typing::after {
+      content: '|';
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body class="overflow-hidden relative min-h-screen flex items-center justify-center">
+  <div class="text-center z-10">
+    <h1 class="text-4xl font-bold text-pink-700 mb-6">Happy Mother's Day!</h1>
+
+    <!-- Envelope button -->
+    <button id="envelopeBtn" class="bg-white shadow-md p-6 rounded-full hover:scale-110 transition transform duration-300">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m0 0v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8m18 0L12 13 3 8"/>
+      </svg>
+    </button>
+
+    <!-- Message box -->
+    <div id="message" class="mt-8 text-lg text-pink-800 max-w-md mx-auto hidden">
+      <p
+        id="voiceMessage"
+        onclick="speakMessage()"
+        class="bg-white p-6 rounded-2xl shadow-xl border border-pink-200 cursor-pointer hover:bg-pink-100 transition typing"
+      >
+        <span id="typedText"></span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Container for falling flowers -->
+  <div id="flowerContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0"></div>
+
+  <script>
+    const envelopeBtn = document.getElementById('envelopeBtn');
+    const message = document.getElementById('message');
+    const flowerContainer = document.getElementById('flowerContainer');
+    const typedText = document.getElementById('typedText');
+  
+    const fullMessage = "Dear Mom, thank you for your endless love, support, and warmth. You are truly the heart of our family. Wishing you a day filled with joy and beautiful moments. 💐💖";
+  
+    let hasClicked = false;
+    let hintElement = null;
+  
+    envelopeBtn.addEventListener('click', () => {
+      hasClicked = true;
+      if (hintElement) {
+        hintElement.remove(); // Remove hint if it exists
+      }
+  
+      if (message.classList.contains('hidden')) {
+        message.classList.remove('hidden');
+        message.classList.add('message-enter');
+        setTimeout(() => {
+          message.classList.add('message-enter-active');
+        }, 10);
+  
+        // Typing effect
+        let i = 0;
+        typedText.textContent = '';
+        const typeInterval = setInterval(() => {
+          typedText.textContent += fullMessage[i];
+          i++;
+          if (i >= fullMessage.length) {
+            clearInterval(typeInterval);
+          }
+        }, 40);
+  
+        // Falling flowers on click
+        for (let i = 0; i < 30; i++) {
+          const flower = document.createElement('div');
+          flower.className = 'flower';
+          const flowers = ['🌸', '🌺', '🌻', '🌼', '💐', '🪷', '🌹'];
+          flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+  
+          flower.style.left = Math.random() * 100 + 'vw';
+          flower.style.animationDuration = 3 + Math.random() * 3 + 's';
+          flower.style.fontSize = (Math.random() * 20 + 16) + 'px';
+  
+          flowerContainer.appendChild(flower);
+  
+          setTimeout(() => {
+            flower.remove();
+          }, 6000);
+        }
+      }
+    });
+  
+    function speakMessage() {
+      const message =
+        "Dear Mom, thank you for your endless love, support, and warmth. You are truly the heart of our family. Wishing you a day filled with joy and beautiful moments.";
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.lang = "en-US";
+      utterance.pitch = 1.1;
+      utterance.rate = 1;
+      utterance.voice = speechSynthesis.getVoices().find(v => v.name.includes("Google") || v.lang === "en-US");
+      speechSynthesis.speak(utterance);
+    }
+  
+    // Continuous flower falling every 3 seconds
+    const flowers = ['🌸', '🌺', '🌻', '🌼', '💐', '🪷', '🌹'];
+    setInterval(() => {
+      for (let i = 0; i < 5; i++) {
+        const flower = document.createElement('div');
+        flower.className = 'flower';
+        flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+        flower.style.left = Math.random() * 100 + 'vw';
+        flower.style.top = '-40px';
+        flower.style.animationDuration = 3 + Math.random() * 4 + 's';
+        flower.style.fontSize = (Math.random() * 20 + 16) + 'px';
+  
+        flowerContainer.appendChild(flower);
+  
+        setTimeout(() => {
+          flower.remove();
+        }, 8000);
+      }
+    }, 3000);
+  
+    // Show hint message after 5 seconds if not clicked
+    setTimeout(() => {
+      if (!hasClicked) {
+        hintElement = document.createElement('div');
+        hintElement.textContent = "Mom, don't forget to open your surprise 💌";
+        hintElement.className = "text-pink-600 text-lg mt-6 animate-bounce";
+        envelopeBtn.insertAdjacentElement('afterend', hintElement);
+      }
+    }, 5000);
+  </script>
+  
+</body>
+</html>
